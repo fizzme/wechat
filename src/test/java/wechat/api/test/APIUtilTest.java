@@ -73,6 +73,7 @@ public class APIUtilTest {
 	@Test
 	public void testUrlEncodeUTF8(){
 		
+		System.out.println("say hello");
 		String result = urlEncodeUTF8(REDIRECT_URI);
 		if(null !=result){
 			System.out.println("编码结果："+result);
