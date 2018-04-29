@@ -93,7 +93,7 @@ public class WebAuthController {
 
 			System.out.println(nowDate + ">>>>>>>>>>>拉取用户信息："+ JSON.toJSONString(userInfo));// 拉取用户信息
 			System.out.println(nowDate + ">>>>>>>>>>将userinfo信息存入到Session中");
-			session.setAttribute(openId, userInfo);
+//			session.setAttribute(openId, userInfo);
 			modelAndView.addObject("msg", "用户授权成功！");
 			modelAndView.setViewName("userinfo.jsp");
 			modelAndView.addObject("userinfo", userInfo);
