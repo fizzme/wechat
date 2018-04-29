@@ -29,7 +29,7 @@ import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 
 /**
- * 网页授权控制器
+ * 网页授权控制器 
  * 
  * @author glen
  *
@@ -187,21 +187,23 @@ public class WebAuthController {
     		LogUtils.info(">>>>>>>>>>>>>register2,验证码通过，跳转到主页面，更新绑定信息");
     		
     		LogUtils.info(">>>>>>>>>>>>>register2,当前用户的openid:"+openid);
-    		LogUtils.info(">>>>>>>>>>>>>register2,从session中获取userinfo信息，跳转到用户中心");
     		SNSUserInfo userinfo = (SNSUserInfo) session.getAttribute("userinfo");
+    		LogUtils.info(">>>>>>>>>>>>>register2,从session中获取userinfo信息，"+JSON.toJSONString(userinfo));
     		if(null !=userinfo){
     			request.setAttribute("userinfo", userinfo);
-    			LogUtils.info(">>>>>>>>>>>>>register2,从session中获取userinfo信息，"+JSON.toJSONString(userinfo));
     			LogUtils.info(">>>>>>>>>>>>>register2,转发请求");
     			request.getRequestDispatcher("userCenter.jsp").forward(request, response);
+    		}else{
+    			LogUtils.info(">>>>>>>>>>>>>register2,未获取到userinfo信息,返回注册页面");
+    	    	return "register.jsp";
     		}
     		//转发请求
 //    		return "index.html";
+    	}else{
+    		//未通过跳转回注册页面
+    		LogUtils.info(">>>>>>>>>>>>>register2,验证码未通过，请重新输入");
+    		request.setAttribute("msg", "验证码不正确，请重新输入");
     	}
-    	//未通过跳转回注册页面
-    	
-    	LogUtils.info(">>>>>>>>>>>>>register2,验证码未通过，请重新输入");
-    	request.setAttribute("msg", "验证码不正确，请重新输入");
     	
     	return "register.jsp";
     	
