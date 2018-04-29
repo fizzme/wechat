@@ -288,15 +288,11 @@ finally {
 	 * @return
 	 * @throws IOException 
 	 * @throws ParseException 
+	 * 需要做编码处理
 	 */
 	public static String doGet(HttpUriRequest httpUriRequest) throws ParseException, IOException {
-		String responseBody = null;
 		CloseableHttpResponse response =  executeRequest(httpUriRequest);
-		
-		HttpEntity entity = response.getEntity();
-		responseBody = EntityUtils.toString(entity);
-		
-		return responseBody;
+		return response != null ? EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8")) : "";
 	}
 
 	
