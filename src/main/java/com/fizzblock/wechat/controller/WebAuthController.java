@@ -55,8 +55,7 @@ public class WebAuthController {
 		ModelAndView modelAndView = new ModelAndView();// 视图与模型类
 
 		String userCode = request.getParameter("code");// 获取code
-		System.out.println(">>>>>>>>>userAuth," + nowDate + "获取用户code值："
-				+ userCode);
+		System.out.println(">>>>>>>>>userAuth," + nowDate + "获取用户code值："+ userCode);
 
 		// 用户取消授权
 		if ("authdeny".equals(userCode)) {

@@ -32,23 +32,23 @@ td {
 </head>
 <body>
 	<h1>用户网页授权信息</h1>
-
-	<img alt="用户头像" src="${sessionScope.userinfo.headimgurl}">
+<h1  style="color: red">${msg}</h1>
+	<img alt="用户头像" src="${requestScope.userinfo.headimgurl}">
 	<table width="100%" cellspacing="0" cellpadding="0">
 		<tr><td width="20%">属性</td><td width="80%">值</td></tr> 
-		<tr><td >openId</td><td >${sessionScope.userinfo.openId}</td></tr> 
-		<tr><td >昵称</td><td >${sessionScope.userinfo.nickname}</td></tr> 
-		<tr><td >性别</td><td >${sessionScope.userinfo.sex}</td></tr> 
+		<tr><td >openId</td><td >${requestScope.userinfo.openId}</td></tr> 
+		<tr><td >昵称</td><td >${requestScope.userinfo.nickname}</td></tr> 
+		<tr><td >性别</td><td >${requestScope.userinfo.sex}</td></tr> 
 		<tr><td >性别</td><td >
-			<c:if test="${sessionScope.userinfo.sex}==1">男</c:if>
-			<c:if test="${sessionScope.userinfo.sex}==2">女</c:if>
-			<c:if test="${sessionScope.userinfo.sex}==0">未知</c:if>
+			<c:if test="${requestScope.userinfo.sex}==1">男</c:if>
+			<c:if test="${requestScope.userinfo.sex}==2">女</c:if>
+			<c:if test="${requestScope.userinfo.sex}==0">未知</c:if>
 		</td></tr> 
-		<tr><td >国家</td><td >${sessionScope.userinfo.country}</td></tr> 
-		<tr><td >省份</td><td >${sessionScope.userinfo.province}</td></tr> 
-		<tr><td >城市</td><td >${sessionScope.userinfo.city}</td></tr> 
-		<tr><td >头像</td><td >${sessionScope.userinfo.headimgurl}</td></tr> 
-		<tr><td >特权</td><td >${sessionScope.userinfo.privilege}</td></tr> 
+		<tr><td >国家</td><td >${requestScope.userinfo.country}</td></tr> 
+		<tr><td >省份</td><td >${requestScope.userinfo.province}</td></tr> 
+		<tr><td >城市</td><td >${requestScope.userinfo.city}</td></tr> 
+		<tr><td >头像</td><td >${requestScope.userinfo.headimgurl}</td></tr> 
+		<tr><td >特权</td><td >${requestScope.userinfo.privilege}</td></tr> 
 	
 	</table>
 
