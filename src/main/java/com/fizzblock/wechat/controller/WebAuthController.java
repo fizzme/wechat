@@ -1,14 +1,19 @@
 package com.fizzblock.wechat.controller;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.http.HttpResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +24,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.fizzblock.wechat.httpclient.util.WeiXinApis;
 import com.fizzblock.wechat.pojo.SNSUserInfo;
 import com.fizzblock.wechat.pojo.WebAccessToken;
+import com.google.code.kaptcha.Constants;
+import com.google.code.kaptcha.Producer;
 
 /**
  * 网页授权控制器
@@ -89,12 +96,15 @@ public class WebAuthController {
 			System.out.println(nowDate + ">>>>>>>>>>从session中获取userInfo");
 
 			SNSUserInfo userInfo = WeiXinApis.fetchUserinfo(token, openId,"zh_CN");
-
+			System.out.println(">>>>>>>>将授权信息存储至session中："+JSON.toJSONString(userInfo));
+			session.setAttribute("userinfo", userInfo);
+			
 			System.out.println(nowDate + ">>>>>>>>>>>拉取用户信息："+ JSON.toJSONString(userInfo));// 拉取用户信息
 			System.out.println(nowDate + ">>>>>>>>>>将userinfo信息存入到Session中");
 //			session.setAttribute(openId, userInfo);
 			modelAndView.addObject("msg", "用户授权成功！");
-			modelAndView.setViewName("userinfo.jsp");
+//			modelAndView.setViewName("userinfo.jsp");
+			modelAndView.setViewName("register.jsp");
 			modelAndView.addObject("userinfo", userInfo);
 			return modelAndView;
 		}
@@ -104,13 +114,109 @@ public class WebAuthController {
 		return modelAndView;
 	}
 
+	
+	//存入session中的键是 	public final static String KAPTCHA_SESSION_KEY = "KAPTCHA_SESSION_KEY";
+    @Autowired
+    private Producer captchaProducer = null;
+
+    
+    @RequestMapping(value = "/captcha")
+    public void getKaptchaImage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        response.setDateHeader("Expires", 0);
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        response.addHeader("Cache-Control", "post-check=0, pre-check=0");
+        response.setHeader("Pragma", "no-cache");
+        response.setContentType("image/jpeg");
+        //生成验证码
+        String capText = captchaProducer.createText();
+        session.setAttribute(Constants.KAPTCHA_SESSION_KEY, capText);
+        //向客户端写出
+        BufferedImage bi = captchaProducer.createImage(capText);
+        ServletOutputStream out = response.getOutputStream();
+        ImageIO.write(bi, "jpg", out);
+        try {
+            out.flush();
+        } finally {
+            out.close();
+        }
+    }
+	
+	
+	/**
+	 * 用户注册
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+    @RequestMapping(value = "/register")
+    public String  register(HttpServletRequest request, HttpSession session,String checkCode) throws Exception {
+    	String captcher = request.getParameter("checkCode");
+    	
+    	System.out.println("request提交获取的captcher："+captcher);
+    	System.out.println("参数绑定获取的captcher："+checkCode);
+    	
+    	String kaptchaPut = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+    	
+    	System.out.println("session中生成的验证码："+kaptchaPut);
+    	
+    	//验证通过，跳转主页
+    	if(kaptchaPut.equals(captcher)){
+    		System.out.println("验证码通过，跳转到主页面，更新绑定信息");
+    		return "index.html";
+    	}
+    	//未通过跳转回注册页面
+    	
+    	System.out.println("验证码通过，请重新输入");
+    	request.setAttribute("msg", "验证码不正确，请重新输入");
+    	
+    	return "register.jsp";
+    	
+    }
+    
+    
+    @RequestMapping(value = "/register2")
+    public String  register2(HttpServletRequest request, HttpSession session,HttpServletResponse response,String checkCode,String telephone,String openid) throws Exception {
+    	String captcher = request.getParameter("checkCode");
+    	
+    	System.out.println(String.format(">>>>>regitser2,获取请求参数checkCode:%s telephone:%s openId:%s", checkCode,telephone,openid));
+    	System.out.println("参数绑定获取的captcher："+checkCode);
+    	
+    	String kaptchaPut = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
+    	
+    	System.out.println("session中生成的验证码："+kaptchaPut);
+    	
+    	//验证通过，跳转主页
+    	if(kaptchaPut.equals(captcher)){
+    		System.out.println("验证码通过，跳转到主页面，更新绑定信息");
+    		
+    		System.out.println("当前用户的openid"+openid);
+    		System.out.println("从session中获取userinfo信息，跳转到用户中心");
+    		SNSUserInfo userinfo = (SNSUserInfo) session.getAttribute("userinfo");
+    		if(null !=userinfo){
+    			request.setAttribute("userinfo", userinfo);
+    			System.out.println("从session中获取userinfo信息，"+JSON.toJSONString(userinfo));
+    		}
+    		//转发请求
+    		request.getRequestDispatcher("userCenter.jsp").forward(request, response);
+//    		return "index.html";
+    	}
+    	//未通过跳转回注册页面
+    	
+    	System.out.println("验证码通过，请重新输入");
+    	request.setAttribute("msg", "验证码不正确，请重新输入");
+    	
+    	return "register.jsp";
+    	
+    }
+    
+    
+	
 	// 获取当前时间
 	private String getNowDate() {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");// 设置日期格式
 		return df.format(new Date());
 	}
-
-
 
 
 

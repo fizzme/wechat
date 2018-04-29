@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="gbk">
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta http-equiv="Access-Control-Allow-Origin" content="*">
+<link rel="stylesheet" href="css/register.css" />
+<link rel="bookmark" href="http://m.oppo.com/favicon.ico"/>
+<link rel="shortcut icon" href="http://m.oppo.com/favicon.ico" type="image/x-icon" />
+<title>仿OPPO网html5手机登陆界面源代码模板-懒人模板【http://www.lanrenmb.com/zt/】</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<style>
+
+	@media screen and (max-width: 786px)
+		.user-hd .my-avatar {  width: 60px;  height: 60px; }
+
+		.user-hd .my-avatar{width: 110px; height:110px; margin:auto ;position:relative}
+		.user-hd .my-avatar img {
+			-moz-border-radius: 50%;
+			-webkit-border-radius: 50%;
+			border-radius: 50%;
+			width: 100%;
+		}
+
+		.user-hd .my-nickname {
+			padding: 20px 0;
+			font-size: 16px;
+			position: relative;
+			width: 100px;
+			margin: 0 auto;
+		}
+
+		.user-hd .my-nickname {
+			padding: 20px 0;
+			font-size: 20px;
+		}
+
+		.user-hd .my-nickname em {
+			font-size: 14px;
+			font-style: normal;
+		}
+
+		.user-hd .my-nickname span {
+			position: relative;
+		}
+</style>
+
+</head>
+<body>
+
+	<header id="header" class="header-topbar">
+		<a class="go-back" href="index.html"><img src="http://m.oppo.com/images/home.png"/></a>
+		<h1 class="header-title">注册</h1>
+	</header>
+	<div id="content" class="content-reg">
+		<div class="user-hd">
+			<div class="my-avatar">
+
+				<img src="http://thirdwx.qlogo.cn/mmopen/vi_32/O9ylcAg1qeib3J1ZZUkp7X9hBCkOBzPVp7LfGTIoSiccYdsDWMGToCnic9yvvEFibyUBqjrTwibHWaxmUW5Mtm0UukQ/132" alt="">
+				<span class="update-tip"><i class="i-update-avatar"></i></span>
+
+			</div>
+			<div class="my-nickname">
+			        <span>
+           				 <em>后海大章鱼?</em>
+			        </span>
+			</div>
+
+		</div>
+
+		<div class="reg-row">
+			<div class="reg-row-border"><input type="text" id="mobile" placeholder="手机号" value=""/></div>
+		</div>
+		<div class="reg-row">
+			<div class="reg-row-width40">
+				<div class="reg-row-border"><input type="text" id="checkcode" placeholder="图片验证码" name="checkcode"/></div>
+			</div>
+			<div class="reg-row-width60">
+				<div class="reg-row-img"><img src="http://m.oppo.com/oppoMobile/AuthCode"/></div>
+				<div class="reg-row-tip">&nbsp;点击刷新</div>
+			</div>
+		</div>
+
+		<div style="height:auto;line-height:20px;overflow:hidden;margin:0px 20px;margin-bottom:10px;color:#F00;display:none;" id="error-tip">提示</div>
+
+		<div class="reg-row">
+			<span id="submit-loading" class="submit" style="display: none;">正在提交...</span>
+			<span id="submit-reg-next" class="submit">立即注册</span>
+		</div>
+	</div>	
+<footer id="footer">
+	<ul id="foot-state">
+				<li><a href="javascript:User.login();">登录</a></li>
+		<li><a href="http://m.oppo.com/reg.html">注册</a></li>
+	</ul>
+	
+	<p class="copyright">Copyright&copy;<a href="http://www.lanrenmb.com/" target="_blank">懒人模板</a> All Rights Reserved 
+(2013-2015) 版权所有</p>
+	
+</body>
+</html>

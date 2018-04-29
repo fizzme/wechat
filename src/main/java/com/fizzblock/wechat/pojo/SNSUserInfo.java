@@ -36,8 +36,22 @@ public class SNSUserInfo {
 	//关注公众号才有
 	private String unionid ;
 
+	/**
+	 * 订阅时间--关注时间
+	 */
+	private long subscribe_time;
 	
 	
+	
+	
+	public long getSubscribe_time() {
+		return subscribe_time;
+	}
+
+	public void setSubscribe_time(long subscribe_time) {
+		this.subscribe_time = subscribe_time;
+	}
+
 	public String getOpenId() {
 		return openId;
 	}

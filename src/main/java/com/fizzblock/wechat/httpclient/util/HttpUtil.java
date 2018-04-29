@@ -1,6 +1,7 @@
 package com.fizzblock.wechat.httpclient.util;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -16,8 +17,10 @@ import javax.security.cert.X509Certificate;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -25,6 +28,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
@@ -106,6 +110,16 @@ public class HttpUtil {
 	}
 
 	/**
+	 * 
+	 * 
+finally {
+			try {
+				response.close();
+				httpClient.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	 * get
 	 * 
 	 * @param url
@@ -254,36 +268,74 @@ public class HttpUtil {
 	 * @param httpUriRequest
 	 * @return
 	 */
-	public static String executeRequest(HttpUriRequest httpUriRequest) {
+	public static CloseableHttpResponse executeRequest(HttpUriRequest httpUriRequest) {
 		// 支持https
 		CloseableHttpClient httpClient = getHttpClient();
 		CloseableHttpResponse response = null;
 		String responseBody = null;
 		try {
 			response = httpClient.execute(httpUriRequest);
-			HttpEntity entity = response.getEntity();
-			responseBody = EntityUtils.toString(entity);
 
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				response.close();
-				httpClient.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		return responseBody;
+		} 
+		return response;
 	}
 
 	/**
 	 * 执行get请求
 	 * @param httpUriRequest
 	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
 	 */
-	public static String doGet(HttpUriRequest httpUriRequest) {
-		return executeRequest(httpUriRequest);
+	public static String doGet(HttpUriRequest httpUriRequest) throws ParseException, IOException {
+		String responseBody = null;
+		CloseableHttpResponse response =  executeRequest(httpUriRequest);
+		
+		HttpEntity entity = response.getEntity();
+		responseBody = EntityUtils.toString(entity);
+		
+		return responseBody;
 	}
 
+	
+	
+	/**
+	 * 执行get请求
+	 * @param httpUriRequest
+	 * @return
+	 * @throws IOException 
+	 * @throws ParseException 
+	 */
+	public static String doGet(String url) throws ParseException, IOException {
+		int socketTimeout =20000; 
+		HttpUriRequest httpUriRequest = RequestBuilder.get().setConfig(serviceConfig(socketTimeout)).setUri(url).build();
+		HttpResponse response =executeRequest(httpUriRequest);;
+		
+		return response != null ? EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8")) : "";
+	}
+	
+	/**
+	 * 连接简历时间，三次握手完成
+	 */
+	public static final int CONNECTION_TIME_OUT = 7000;
+	
+	/**
+	 * 从连接池去链接的超市是时间
+	 */
+	public static final int CONNECTION_REQUEST_FETCH_POOL_TIME_OUT = 7000;
+	
+	
+	
+	/**
+	 * 设置请求超时的配置
+	 * @param timeout
+	 * @return
+	 */
+	private static RequestConfig serviceConfig(int socketTimeout) {
+		
+		return RequestConfig.custom().setConnectTimeout(CONNECTION_TIME_OUT).setConnectionRequestTimeout(CONNECTION_REQUEST_FETCH_POOL_TIME_OUT)
+				.setSocketTimeout(socketTimeout).setCookieSpec("compatibility").build();
+	}
 }
