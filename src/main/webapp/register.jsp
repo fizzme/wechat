@@ -76,7 +76,7 @@
 
 		</div>
 		<!-- 使用js来提交表单 -->
-		<form action="${pageContext.request.contextPath}/register2" method="POST" id="bindForm" onsubmit="return checkForm();">
+		<form action="${pageContext.request.contextPath}/register2" method="POST" id="bindForm" onsubmit='return checkForm();'>
 		
 			<div class="reg-row">
 				<div class="reg-row-border"><input type="text" id="telephone" name="telephone" placeholder="手机号" value=""/></div>
@@ -86,7 +86,7 @@
 					<div class="reg-row-border"><input type="text" id="checkCode" name="checkCode" placeholder="图片验证码" /></div>
 				</div>
 				<div class="reg-row-width60">
-					<div class="reg-row-img"><img src="${pageContext.request.contextPath}/captcha"  onclick="changeCode(this)"/></div>
+					<div class="reg-row-img"><img src="${pageContext.request.contextPath}/captcha" onclick="changeCode(this)" style="cursor: pointer;" /></div>
 					<div class="reg-row-tip">&nbsp;点击刷新</div>
 				</div>
 			</div>
@@ -120,15 +120,18 @@
 
 
 <script type="text/javascript">
-    
-    
-     // 用于点击时产生不同的验证码
     function changeCode(node){
-        node.src = "${pageContext.request.contextPath}/captcha" ;    
-    }
+        // 用于点击时产生不同的验证码
+       node.src = "${pageContext.request.contextPath}/captcha" ;    
+   }
+</script>
+
+
+
+<script type="text/javascript">
     
-    //表单提交时校验绑定参数
     function checkForm(){
+    //表单提交时校验绑定参数
     	var telephone = document.getElementById("telephone").value;
     	var checkCode = document.getElementById("checkCode").value;
     	var openid = ${requestScope.userinfo.openId};

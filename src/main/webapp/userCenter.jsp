@@ -260,7 +260,7 @@ seajs.use('http://statics.oneplus.cn/v2/js/g/top-head.js',function(topHead){
 			    <div class="my-avatar">
 
 <!-- 			        		<img src="http://thirdwx.qlogo.cn/mmopen/vi_32/O9ylcAg1qeib3J1ZZUkp7X9hBCkOBzPVp7LfGTIoSiccYdsDWMGToCnic9yvvEFibyUBqjrTwibHWaxmUW5Mtm0UukQ/132" alt=""> -->
-			        		<img src="${requestScope.userinfo.headimgurl}" alt="">
+			        		<img src="${requestScope.userinfo.headimgurl}" alt=""/>
 			            <span class="update-tip"><i class="i-update-avatar"></i></span>
 
 			    </div>                

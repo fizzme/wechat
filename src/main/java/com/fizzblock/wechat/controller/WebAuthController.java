@@ -24,6 +24,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fizzblock.wechat.httpclient.util.WeiXinApis;
 import com.fizzblock.wechat.pojo.SNSUserInfo;
 import com.fizzblock.wechat.pojo.WebAccessToken;
+import com.fizzblock.wechat.util.common.LogUtils;
 import com.google.code.kaptcha.Constants;
 import com.google.code.kaptcha.Producer;
 
@@ -56,32 +57,31 @@ public class WebAuthController {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
 		String nowDate = df.format(new Date());
 
-		System.out.println(nowDate
-				+ ">>>>>>>>>userAuth,进入授权的redirect_url回调页面，准备获取用户信息");
+		LogUtils.info(">>>>>>>>>userAuth,进入授权的redirect_url回调页面，准备获取用户信息");
 
 		ModelAndView modelAndView = new ModelAndView();// 视图与模型类
 
 		String userCode = request.getParameter("code");// 获取code
-		System.out.println(">>>>>>>>>userAuth," + nowDate + "获取用户code值："+ userCode);
+		LogUtils.info(">>>>>>>>>userAuth," + nowDate + "获取用户code值："+ userCode);
 
 		// 用户取消授权
 		if ("authdeny".equals(userCode)) {
-			System.out.println(">>>>>>>>>userAuth," + nowDate + ",用户取消授权跳到主页面");
+			LogUtils.info(">>>>>>>>>userAuth," + nowDate + ",用户取消授权跳到主页面");
 			modelAndView.setViewName("index.html");
 			return modelAndView;
 		}
 
 		WebAccessToken accessToken = WeiXinApis.getAccessToken(APP_ID,APP_SECRET, userCode);// 获取网页授权access_token实体类，包含很多字段
-		System.out.println(">>>>>>>>>userAuth,获取的accessToken信息+"+ JSON.toJSONString(accessToken));
+		LogUtils.info(">>>>>>>>>userAuth,获取的accessToken信息+"+ JSON.toJSONString(accessToken));
 		// 用户同意授权
-		System.out.println(nowDate + ">>>>>>用户同意授权,从session中获取accessToken");
+		LogUtils.info(">>>>>>>>>userAuth,用户同意授权,从session中获取accessToken");
 		// 判断是否是超时的code
 		JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(accessToken));
 		String errcode = jsonObject.getString("errcode");
 
 		if (null != errcode && !"".equals(errcode)) {// 存在错误
 			String err_msg = jsonObject.getString("errmsg");
-			System.out.println(">>>>>>>>>"+ String.format("获取accessToken出错 errcode:%s errmsg:%s",errcode + "", err_msg));
+			LogUtils.info(">>>>>>>>>userAuth,"+ String.format("获取accessToken出错 errcode:%s errmsg:%s",errcode + "", err_msg));
 			modelAndView.setViewName("userinfo_fail.jsp");// 页面跳转
 			modelAndView.addObject("msg", String.format("获取accessToken出错 errcode:%s errmsg:%s", errcode + "",err_msg));
 			return modelAndView;
@@ -90,19 +90,16 @@ public class WebAuthController {
 		if (null != accessToken && !"".equals(accessToken)) {
 			// 获取访问的token凭证
 			String token = accessToken.getAccessToken();
-			System.out.println(nowDate + ">>>>>>>>>>获取网页授权token凭证：" + token);
+			LogUtils.info(">>>>>>>>>userAuth,获取网页授权token凭证：" + token);
 			String openId = accessToken.getOpenId();// 获取用户标识
-			System.out.println(nowDate + ">>>>>>>>>>获取用户OpenId：" + openId);
-			System.out.println(nowDate + ">>>>>>>>>>从session中获取userInfo");
+			LogUtils.info(">>>>>>>>>userAuth,获取用户OpenId：" + openId);
+			LogUtils.info(">>>>>>>>>userAuth,从session中获取userInfo");
 
 			SNSUserInfo userInfo = WeiXinApis.fetchUserinfo(token, openId,"zh_CN");
-			System.out.println(">>>>>>>>将授权信息存储至session中："+JSON.toJSONString(userInfo));
+			LogUtils.info(">>>>>>>>>userAuth,将授权信息存储至session中,userinfo信息"+JSON.toJSONString(userInfo));
 			session.setAttribute("userinfo", userInfo);
-			
-			System.out.println(nowDate + ">>>>>>>>>>>拉取用户信息："+ JSON.toJSONString(userInfo));// 拉取用户信息
-			System.out.println(nowDate + ">>>>>>>>>>将userinfo信息存入到Session中");
 //			session.setAttribute(openId, userInfo);
-			modelAndView.addObject("msg", "用户授权成功！");
+//			modelAndView.addObject("msg", "用户授权成功！");
 //			modelAndView.setViewName("userinfo.jsp");
 			modelAndView.setViewName("register.jsp");
 			modelAndView.addObject("userinfo", userInfo);
@@ -131,6 +128,7 @@ public class WebAuthController {
         //生成验证码
         String capText = captchaProducer.createText();
         session.setAttribute(Constants.KAPTCHA_SESSION_KEY, capText);
+        LogUtils.info(">>>>>>>>>>>>>getKaptchaImage,后端生成的验证码："+capText);
         //向客户端写出
         BufferedImage bi = captchaProducer.createImage(capText);
         ServletOutputStream out = response.getOutputStream();
@@ -152,22 +150,21 @@ public class WebAuthController {
     @RequestMapping(value = "/register")
     public String  register(HttpServletRequest request, HttpSession session,String checkCode) throws Exception {
     	String captcher = request.getParameter("checkCode");
-    	
-    	System.out.println("request提交获取的captcher："+captcher);
-    	System.out.println("参数绑定获取的captcher："+checkCode);
+    	LogUtils.info(">>>>>>>>>>>>>register,request提交获取的captcher："+captcher);
+    	LogUtils.info(">>>>>>>>>>>>>register,参数绑定获取的captcher："+checkCode);
     	
     	String kaptchaPut = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
     	
-    	System.out.println("session中生成的验证码："+kaptchaPut);
+    	LogUtils.info(">>>>>>>>>>>>>register,session中生成的验证码："+kaptchaPut);
     	
     	//验证通过，跳转主页
     	if(kaptchaPut.equals(captcher)){
-    		System.out.println("验证码通过，跳转到主页面，更新绑定信息");
+    		LogUtils.info(">>>>>>>>>>>>>register,验证码通过，跳转到主页面，更新绑定信息");
     		return "index.html";
     	}
     	//未通过跳转回注册页面
     	
-    	System.out.println("验证码通过，请重新输入");
+    	LogUtils.info(">>>>>>>>>>>>>register,验证码通过，请重新输入");
     	request.setAttribute("msg", "验证码不正确，请重新输入");
     	
     	return "register.jsp";
@@ -179,31 +176,31 @@ public class WebAuthController {
     public String  register2(HttpServletRequest request, HttpSession session,HttpServletResponse response,String checkCode,String telephone,String openid) throws Exception {
     	String captcher = request.getParameter("checkCode");
     	
-    	System.out.println(String.format(">>>>>regitser2,获取请求参数checkCode:%s telephone:%s openId:%s", checkCode,telephone,openid));
-    	System.out.println("参数绑定获取的captcher："+checkCode);
+    	LogUtils.info(String.format(">>>>>>>>>>>>>register2,,获取请求参数checkCode:%s telephone:%s openId:%s", checkCode,telephone,openid));
     	
     	String kaptchaPut = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
     	
-    	System.out.println("session中生成的验证码："+kaptchaPut);
+    	LogUtils.info(">>>>>>>>>>>>>register2,session中生成的验证码："+kaptchaPut);
     	
     	//验证通过，跳转主页
     	if(kaptchaPut.equals(captcher)){
-    		System.out.println("验证码通过，跳转到主页面，更新绑定信息");
+    		LogUtils.info(">>>>>>>>>>>>>register2,验证码通过，跳转到主页面，更新绑定信息");
     		
-    		System.out.println("当前用户的openid"+openid);
-    		System.out.println("从session中获取userinfo信息，跳转到用户中心");
+    		LogUtils.info(">>>>>>>>>>>>>register2,当前用户的openid:"+openid);
+    		LogUtils.info(">>>>>>>>>>>>>register2,从session中获取userinfo信息，跳转到用户中心");
     		SNSUserInfo userinfo = (SNSUserInfo) session.getAttribute("userinfo");
     		if(null !=userinfo){
     			request.setAttribute("userinfo", userinfo);
-    			System.out.println("从session中获取userinfo信息，"+JSON.toJSONString(userinfo));
+    			LogUtils.info(">>>>>>>>>>>>>register2,从session中获取userinfo信息，"+JSON.toJSONString(userinfo));
+    			LogUtils.info(">>>>>>>>>>>>>register2,转发请求");
+    			request.getRequestDispatcher("userCenter.jsp").forward(request, response);
     		}
     		//转发请求
-    		request.getRequestDispatcher("userCenter.jsp").forward(request, response);
 //    		return "index.html";
     	}
     	//未通过跳转回注册页面
     	
-    	System.out.println("验证码通过，请重新输入");
+    	LogUtils.info(">>>>>>>>>>>>>register2,验证码未通过，请重新输入");
     	request.setAttribute("msg", "验证码不正确，请重新输入");
     	
     	return "register.jsp";
