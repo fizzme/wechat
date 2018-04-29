@@ -38,10 +38,6 @@ public class WebAuthController {
 
 	public String STATE_PARAM = null;
 
-	@RequestMapping(value = "/home")
-	public String index() {
-		return "index.html";
-	}
 
 	@RequestMapping(value = "/userAuth.action", method = RequestMethod.GET)
 	public ModelAndView userAuth(HttpSession session,
