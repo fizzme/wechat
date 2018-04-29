@@ -19,14 +19,14 @@ public class WeiXinApis {
 
 	
 	/**
-	 * 获取accessToken
+	 * 获取网页授权专用accessToken
 	 * 
 	 * @param appid
 	 * @param secret
 	 * @param code
 	 * @return
 	 */
-	public static WebAccessToken getAccessToken(String appid, String secret, String code) {
+	public static WebAccessToken getWebAccessToken(String appid, String secret, String code) {
 		System.out.println(getNowDate()+">>>>>>>>>>>>获取accessToken中.....");
 	       HttpUriRequest httpUriRequest = RequestBuilder.get().setUri("https://api.weixin.qq.com/sns/oauth2/access_token").addParameter("appid", appid).addParameter("secret", secret).addParameter("code", code).addParameter("grant_type", "authorization_code").build();
 	       String jsonStr = null;
@@ -111,11 +111,10 @@ public class WeiXinApis {
 	 * @param lang 语言  zh_CN 简体，zh_TW 繁体，en 英语
 	 * @return
 	 */
-	public static SNSUserInfo fetchUserinfo(String access_token, String openid,
+	public static SNSUserInfo fetchSNSUserinfo(String access_token, String openid,
 			String lang) {
 		HttpUriRequest httpUriRequest = RequestBuilder.get()
-//				.setUri("https://api.weixin.qq.com/sns/userinfo")
-				.setUri("https://api.weixin.qq.com/cgi-bin/user/info")
+				.setUri("https://api.weixin.qq.com/sns/userinfo")
 				.addParameter("access_token", access_token)
 				.addParameter("openid", openid).addParameter("lang", lang)
 				.build();
@@ -144,6 +143,51 @@ public class WeiXinApis {
 				userInfo = null;
 				requestFailLog(jsonObject, getNowDate()+"拉取粉丝用户信息异常");
 				ex.printStackTrace();
+		}
+		
+		return userInfo;
+	}
+	
+	
+	/**
+	 * 请求用户基本信息
+	 * @param access_token 凭证
+	 * @param openid 用户的openID
+	 * @param lang 语言  zh_CN 简体，zh_TW 繁体，en 英语
+	 * @return
+	 */
+	public static SNSUserInfo fetchFanUserinfo(String access_token, String openid,
+			String lang) {
+		HttpUriRequest httpUriRequest = RequestBuilder.get()
+				.setUri("https://api.weixin.qq.com/cgi-bin/user/info")
+				.addParameter("access_token", access_token)
+				.addParameter("openid", openid).addParameter("lang", lang)
+				.build();
+		
+		//获取微信iso编码结果
+		String jsonStr = null;
+		try {
+			jsonStr = HttpUtil.doGet(httpUriRequest);
+			System.out.println("请求结果："+jsonStr);
+		} catch (ParseException e) {
+			System.out.println("请求异常："+e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		JSONObject jsonObject = null;
+		SNSUserInfo userInfo = null;
+		try{
+			//处理中文乱码问题微信端是ISO-8859-1编码格式，这边要做处理
+//				String userInfoStr = new String(jsonStr.getBytes("ISO-8859-1"), "UTF-8");
+//				jsonObject = JSON.parseObject(userInfoStr);
+			jsonObject = JSON.parseObject(jsonStr);
+			userInfo = JSON.toJavaObject(jsonObject, SNSUserInfo.class);
+		}catch(Exception ex){
+			userInfo = null;
+			requestFailLog(jsonObject, getNowDate()+"拉取粉丝用户信息异常");
+			ex.printStackTrace();
 		}
 		
 		return userInfo;

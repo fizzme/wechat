@@ -114,6 +114,11 @@ public class APIUtilTest {
 	String appid = "wx416c5da1eef311e6";
 	String secret = "30d7fdede88444ff927934f50b367669";
 	
+	/**
+	 * 获取通用的accessToken
+	 * @return
+	 * @throws IOException
+	 */
 	private String fetcheAccessToken() throws IOException{
 	    //获取accessToken的方式
 //	    https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx416c5da1eef311e6&secret=30d7fdede88444ff927934f50b367669
@@ -133,8 +138,12 @@ public class APIUtilTest {
 		return accessToken;
 	}
 	
+	
+	/**
+	 * 获取fans信息
+	 */
 	@Test
-	public void fetchUserInfo(){
+	public void fetchFansUserInfo(){
 		//获取访问的token凭证
 //		String token = "5_ooUPkKnegNAztR9ytY5h3RCN3BOwnzSMmCgiX4tNq-YR6JyT1WqUC4HODKScqfVwwlTPcqQZJ5OqP7alpVVFcQgseQZkd2Nd7n_dFf73Rdc";
 		String token = null;
@@ -149,7 +158,7 @@ public class APIUtilTest {
 		String openId = "o3Wh70TjTIZk9VpOtcw5vbIQ1dN4";
 //		System.out.println(nowDate+">>>>>>>>>>获取用户OpenId："+openId);
 		//拉取用户信息
-		SNSUserInfo userInfo = WeiXinApis.fetchUserinfo(token, openId, "zh_CN");
+		SNSUserInfo userInfo = WeiXinApis.fetchFanUserinfo(token, openId, "zh_CN");
 		System.out.println(">>>>>>>>>>>拉取用户信息："+JSON.toJSONString(userInfo));
 		
 		String template = " openId:%s 昵称：%s 性别：%d 省份：%s  城市 ：%s  国家:%s headimage:%s  unionid:%s";

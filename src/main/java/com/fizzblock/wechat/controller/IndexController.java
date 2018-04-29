@@ -77,7 +77,7 @@ public class IndexController {
 						if(null== accessToken){
 							
 							
-							accessToken = WeiXinApis.getAccessToken(APP_ID, APP_SECRET, userCode);
+							accessToken = WeiXinApis.getWebAccessToken(APP_ID, APP_SECRET, userCode);
 							//判断是否是超时的code
 							JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(accessToken));
 							String errcode = jsonObject.getString("errcode");
@@ -116,7 +116,7 @@ public class IndexController {
 									
 									System.out.println(nowDate+">>>>>>>>>>session中userInfo不存在，从微信拉取用户数据");
 									//拉取用户信息
-									userInfo = WeiXinApis.fetchUserinfo(token, openId, "zh_CN");
+									userInfo = WeiXinApis.fetchSNSUserinfo(token, openId, "zh_CN");
 									System.out.println(nowDate+">>>>>>>>>>>拉取用户信息："+JSON.toJSONString(userInfo));
 									System.out.println(nowDate+">>>>>>>>>>将userinfo信息存入到Session中");
 									session.setAttribute(openId, userInfo);
@@ -214,7 +214,7 @@ public class IndexController {
 				
 				System.out.println(getNowDate()+">>>>>>code未被使用"+code);
 				//使用code获取accessToken
-				WebAccessToken  accessToken =  WeiXinApis.getAccessToken(APP_ID, APP_SECRET, code);
+				WebAccessToken  accessToken =  WeiXinApis.getWebAccessToken(APP_ID, APP_SECRET, code);
 				
 				//accessToken获取失败,跳转到失败界面，打印日志信息
 				if(accessTokenFail(accessToken)){
@@ -233,7 +233,7 @@ public class IndexController {
 					System.out.println(String.format(getNowDate()+">>>>>>>>>>获取token凭证：%s 获取用户OpenId：%s", token,openId));
 					
 					//拉取用户信息
-					SNSUserInfo userInfo = WeiXinApis.fetchUserinfo(token, openId, "zh_CN");
+					SNSUserInfo userInfo = WeiXinApis.fetchSNSUserinfo(token, openId, "zh_CN");
 					System.out.println(getNowDate()+">>>>>>>>>>>拉取用户信息："+JSON.toJSONString(userInfo));
 					
 					//存入用户信息到application，以openId作为键
@@ -287,7 +287,7 @@ public class IndexController {
 			//code未被使用
 			if(codeUnused(flag)){
 				System.out.println(getNowDate()+">>>>>>code未失效，code:"+code);
-				WebAccessToken webAccessToken = WeiXinApis.getAccessToken(APP_ID, APP_SECRET, code);
+				WebAccessToken webAccessToken = WeiXinApis.getWebAccessToken(APP_ID, APP_SECRET, code);
 				//accessToken获取成功，拉取用户信息
 				if(accessTokenSuccess(webAccessToken)){
 					System.out.println(getNowDate()+">>>>>>获取base_info的accessToken获取成功，拉取用户信息 accessToken:"+JSON.toJSONString(webAccessToken));

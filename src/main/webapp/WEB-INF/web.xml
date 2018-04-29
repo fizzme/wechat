@@ -5,6 +5,15 @@
 
 	<display-name>wechat</display-name>
 
+	<context-param>  
+	    <param-name>log4jConfiguration</param-name>  
+	    <param-value>/WEB-INF/conf/log4j2.xml</param-value>  
+	</context-param>  
+	  
+	<listener>  
+	    <listener-class>org.apache.logging.log4j.web.Log4jServletContextListener</listener-class>  
+	</listener> 
+
 	<!-- 配置springmvc的前端控制 -->
 	<servlet>
 		<servlet-name>springmvc</servlet-name>

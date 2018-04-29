@@ -71,7 +71,7 @@ public class WebAuthController {
 			return modelAndView;
 		}
 
-		WebAccessToken accessToken = WeiXinApis.getAccessToken(APP_ID,APP_SECRET, userCode);// 获取网页授权access_token实体类，包含很多字段
+		WebAccessToken accessToken = WeiXinApis.getWebAccessToken(APP_ID,APP_SECRET, userCode);// 获取网页授权access_token实体类，包含很多字段
 		LogUtils.info(">>>>>>>>>userAuth,获取的accessToken信息+"+ JSON.toJSONString(accessToken));
 		// 用户同意授权
 		LogUtils.info(">>>>>>>>>userAuth,用户同意授权,从session中获取accessToken");
@@ -95,7 +95,7 @@ public class WebAuthController {
 			LogUtils.info(">>>>>>>>>userAuth,获取用户OpenId：" + openId);
 			LogUtils.info(">>>>>>>>>userAuth,从session中获取userInfo");
 
-			SNSUserInfo userInfo = WeiXinApis.fetchUserinfo(token, openId,"zh_CN");
+			SNSUserInfo userInfo = WeiXinApis.fetchSNSUserinfo(token, openId,"zh_CN");
 			LogUtils.info(">>>>>>>>>userAuth,将授权信息存储至session中,userinfo信息"+JSON.toJSONString(userInfo));
 			session.setAttribute("userinfo", userInfo);
 //			session.setAttribute(openId, userInfo);
