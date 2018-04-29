@@ -129,10 +129,17 @@ public class WeiXinApis {
 	
 	
 	//网页授权
-	public static String getOauth2AuthURL(String appid,
+	/**
+	 * 生成网页授权重定向的url地址
+	 * @param appid
+	 * @param redirect_uri
+	 * @param snsapi_userinfo
+	 * @param state
+	 * @return
+	 */
+	public static String getWebOauth2AuthURL(String appid,
 			String redirect_uri, boolean snsapi_userinfo, String state) {
-		return connectOauth2Authorize(appid, redirect_uri, snsapi_userinfo,
-				state, (String) null);
+		return connectOauth2AuthorizeUrl(appid, redirect_uri, snsapi_userinfo,state, (String) null);
 	}
 
 	/**
@@ -144,7 +151,7 @@ public class WeiXinApis {
 	 * @param component_appid
 	 * @return
 	 */
-	public static String connectOauth2Authorize(String appid,
+	public static String connectOauth2AuthorizeUrl(String appid,
 			String redirect_uri, boolean snsapi_userinfo, String state,
 			String component_appid) {
 		try {
@@ -171,7 +178,7 @@ public class WeiXinApis {
 	}
 	
 	//获取当前时间
-	public static String getNowDate() {
+	private static String getNowDate() {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");//设置日期格式
 		return df.format(new Date());
 	}

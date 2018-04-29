@@ -17,11 +17,29 @@ public class APIUtilTest {
 
 	public String APP_SECRET = "30d7fdede88444ff927934f50b367669";
 	
-	public String REDIRECT_URI = "http://180.76.245.252/getSNSUserinfo.php";
-	public String REDIRECT_URI_OpenId = "http://fizzblock.bceapp.com/getUserInfoBind.do";
+	public String REDIRECT_URI = "http://118.25.4.250/wechat-demo/getSNSUserinfo.php";
 	
-	public boolean SNSAPI_USERINFO = true;
+	/**
+	 * 重定向的controller
+	 */
+//	public String REDIRECT_CONTROLLER_URL = "http://118.25.4.250/wechat-demo/getUserInfoBind.do";
+	public String REDIRECT_CONTROLLER_URL = "http://www.fizzblock.cn/wechat-demo/userAuth.action";
 	
+	
+	/**
+	 * 获取用户信息详情授权
+	 */
+	public boolean SNSAPI_USERINFO_DETAIL_FLAG = true;
+	
+	/**
+	 * 基本信息授权
+	 */
+	public boolean SNSAPI_USERINFO_BASE_FLAG = false;
+	
+	
+	/**
+	 * state参数值可传可不传
+	 */
 	public String STATE_PARAM = null; 
 	/**
 	 * 测试反射解析工具的效果
@@ -31,18 +49,19 @@ public class APIUtilTest {
 		
 //		String redirect_uri = urlEncodeUTF8(REDIRECT_URI);
 		if(null != REDIRECT_URI && !"".equals(REDIRECT_URI)){
-			String  webAuthUrl = WeiXinApis.getOauth2AuthURL(APP_ID, REDIRECT_URI, SNSAPI_USERINFO, STATE_PARAM);
+//			String  webAuthUrl = WeiXinApis.getWebOauth2AuthURL(APP_ID, REDIRECT_URI, SNSAPI_USERINFO_DETAIL_FLAG, STATE_PARAM);
+			String  webAuthUrl = WeiXinApis.getWebOauth2AuthURL(APP_ID, REDIRECT_CONTROLLER_URL, SNSAPI_USERINFO_DETAIL_FLAG, STATE_PARAM);
+//			String  webAuthUrl = WeiXinApis.getWebOauth2AuthURL(APP_ID, REDIRECT_URI, SNSAPI_USERINFO_BASE_FLAG, STATE_PARAM);
 			System.out.println("编码结果："+webAuthUrl);
-			
-			
 		}else{
 			System.out.println("编码异常，查看信息");
 		}
 	}
 	
+	
 	@Test
 	public void weiXinWebBase_urlTest(){
-		String redirect_url =  WeiXinApis.connectOauth2Authorize(APP_ID, REDIRECT_URI_OpenId, false, null, null);
+		String redirect_url =  WeiXinApis.connectOauth2AuthorizeUrl(APP_ID, REDIRECT_CONTROLLER_URL, false, null, null);
 		System.out.println("openID的总体请求地址\n"+redirect_url);
 		
 	}
@@ -70,6 +89,9 @@ public class APIUtilTest {
 		return result;
 	}
 	
+	/**
+	 * 菜单跳转和网页授权的url转码
+	 */
 	@Test
 	public void testUrlEncodeUTF8(){
 		
